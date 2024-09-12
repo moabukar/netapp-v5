@@ -41,9 +41,9 @@ def execute_command():
         return jsonify({'output': f'Error: {tool} is not an allowed command.'})
     
     if tool == 'ping':
-        command = f"ping -c 4 {' '.join(command.split()[1:])}" if platform.system() != "Windows" else f"ping -n 4 {' '.join(command.split()[1:])}"
-    elif tool == 'traceroute' and platform.system() == "Windows":
-        command = f"tracert {' '.join(command.split()[1:])}"
+        command = f"ping -c 4 {' '.join(command.split()[1:])}"
+    elif tool == 'traceroute':
+        command = f"traceroute -m 15 {' '.join(command.split()[1:])}"
     
     app.logger.info(f"Executing command: {command}")
     output = run_command(command)
