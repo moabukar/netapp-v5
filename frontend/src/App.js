@@ -13,20 +13,21 @@ import Quiz from './components/Quiz';
 import NetworkInfo from './components/NetworkInfo';
 import CommandReference from './components/CommandReference';
 
-const API_URL = 'http://localhost:5000';
+// const API_URL = 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const darkBlueTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#1a237e',
+      main: '#2196f3',
     },
     secondary: {
-      main: '#0d47a1',
+      main: '#4fc3f7',
     },
     background: {
       default: '#0a1929',
-      paper: '#102a43',
+      paper: '#1a2035',
     },
     text: {
       primary: '#ffffff',
@@ -38,23 +39,22 @@ const darkBlueTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
+          textTransform: 'none',
+          fontWeight: 'bold',
         },
       },
     },
-    MuiPaper: {
+    MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          backgroundColor: '#1a2035',
         },
       },
     },
-    MuiContainer: {
+    MuiTypography: {
       styleOverrides: {
         root: {
-          backgroundColor: '#1e2a3a',
-          borderRadius: 16,
-          padding: '24px',
-          marginTop: '24px',
+          color: '#ffffff',
         },
       },
     },
@@ -89,9 +89,11 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/api/quiz`);
       const data = await response.json();
+      console.log("Fetched quiz question:", data);
       setQuizQuestion(data);
     } catch (error) {
       console.error('Error fetching quiz question:', error);
+      setQuizQuestion(null);
     }
   };
 

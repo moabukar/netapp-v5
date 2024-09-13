@@ -28,7 +28,9 @@ def get_quiz_question():
     if questions is None or not questions:
         logger.error("Failed to load quiz questions or questions are empty")
         return jsonify({"error": "Failed to load quiz questions"}), 500
-    return jsonify(random.choice(questions))
+    selected_question = random.choice(questions)
+    logger.info(f"Selected question: {selected_question}")
+    return jsonify(selected_question)
 
 @app.route('/api/network_info', methods=['GET'])
 def get_network_info():

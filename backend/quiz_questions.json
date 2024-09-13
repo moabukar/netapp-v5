@@ -1,0 +1,102 @@
+[
+    {
+        "question": "What does IP stand for in networking?",
+        "options": [
+            "Internet Protocol",
+            "Internal Process",
+            "Integrated Platform",
+            "Information Pathway"
+        ],
+        "correct_answer": "Internet Protocol"
+    },
+    {
+        "question": "Which layer of the OSI model does the IP protocol operate on?",
+        "options": [
+            "Network Layer",
+            "Transport Layer",
+            "Data Link Layer",
+            "Application Layer"
+        ],
+        "correct_answer": "Network Layer"
+    },
+    {
+        "question": "What is the purpose of DNS in networking?",
+        "options": [
+            "To assign IP addresses",
+            "To translate domain names to IP addresses",
+            "To encrypt data",
+            "To route packets"
+        ],
+        "correct_answer": "To translate domain names to IP addresses"
+    },
+    {
+        "question": "What is the default port number for HTTP?",
+        "options": [
+            "80",
+            "443",
+            "8080",
+            "21"
+        ],
+        "correct_answer": "80"
+    },
+    {
+        "question": "Which protocol is used for secure web browsing?",
+        "options": [
+            "HTTP",
+            "FTP",
+            "HTTPS",
+            "SMTP"
+        ],
+        "correct_answer": "HTTPS"
+    },
+    {
+        "question": "What does DHCP stand for?",
+        "options": [
+            "Dynamic Host Configuration Protocol",
+            "Domain Host Control Protocol",
+            "Distributed Host Computing Protocol",
+            "Direct Host Communication Protocol"
+        ],
+        "correct_answer": "Dynamic Host Configuration Protocol"
+    },
+    {
+        "question": "Which of the following is not a valid IP address?",
+        "options": [
+            "192.168.1.1",
+            "256.0.0.1",
+            "10.0.0.1",
+            "172.16.0.1"
+        ],
+        "correct_answer": "256.0.0.1"
+    },
+    {
+        "question": "What is the purpose of a subnet mask?",
+        "options": [
+            "To identify the network portion of an IP address",
+            "To encrypt network traffic",
+            "To block unwanted traffic",
+            "To speed up network connections"
+        ],
+        "correct_answer": "To identify the network portion of an IP address"
+    },
+    {
+        "question": "Which protocol is used for sending email?",
+        "options": [
+            "SMTP",
+            "POP3",
+            "IMAP",
+            "FTP"
+        ],
+        "correct_answer": "SMTP"
+    },
+    {
+        "question": "What does NAT stand for in networking?",
+        "options": [
+            "Network Address Translation",
+            "National Advanced Technology",
+            "New Age Transmission",
+            "Node Allocation Table"
+        ],
+        "correct_answer": "Network Address Translation"
+    }
+]

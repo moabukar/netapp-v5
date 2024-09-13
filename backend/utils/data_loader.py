@@ -21,7 +21,14 @@ def load_json_file(filename):
         return None
 
 def load_quiz_questions():
-    return load_json_file('quiz_questions.json')
+    try:
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'quiz_questions.json')
+        with open(file_path, 'r') as file:
+            questions = json.load(file)
+        return questions
+    except Exception as e:
+        print(f"Error loading quiz questions: {e}")
+        return None
 
 def load_network_info():
     return load_json_file('network_info.json')

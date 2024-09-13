@@ -1,19 +1,21 @@
-version: '3.8'
+version: '3'
 services:
   backend:
     build: ./backend
     ports:
       - "5000:5000"
-    volumes:
-      - ./backend:/app
     environment:
       - FLASK_ENV=development
+    volumes:
+      - ./backend:/app
 
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"  # Map container's 3000 to host's 3001
-    volumes:
-      - ./frontend:/app
+      - "3000:3000"
     depends_on:
       - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    volumes:
+      - ./frontend:/app
