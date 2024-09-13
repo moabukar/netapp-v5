@@ -1,4 +1,4 @@
-# Network Simulator Pro
+# Network Sim Pro
 
 Network Simulator Pro is an interactive web application designed to help users learn about networking concepts, practice network commands, and test their knowledge through quizzes.
 
@@ -20,77 +20,11 @@ Network Simulator Pro is an interactive web application designed to help users l
 - Node.js 14+
 - Docker and Docker Compose (for containerized setup)
 
-## Setup and Running (Raw Environment)
-
-### Backend Setup
-
-1. Clone the repository:
-
-   ```
-   git clone https://github.com/yourusername/network-simulator-pro.git
-   cd network-simulator-pro
-   ```
-
-2. Set up a virtual environment:
-
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-
-3. Install backend dependencies:
-
-   ```
-   cd backend
-   pip install -r requirements.txt
-   ```
-
-4. Run the Flask application:
-
-   ```
-   python app.py
-   ```
-
-The backend should now be running on `http://localhost:5000`.
-
-### Frontend Setup
-
-1. Open a new terminal and navigate to the frontend directory:
-
-   ```
-   cd frontend
-   ```
-
-2. Install frontend dependencies:
-
-   ```
-   npm install
-   ```
-
-3. Start the React development server:
-
-   ```
-   npm start
-   ```
-
-The frontend should now be accessible at `http://localhost:3000`.
-
 ## Setup and Running (Containerized Environment)
 
-1. Ensure Docker and Docker Compose are installed on your system.
-
-2. Clone the repository:
-
-   ```
-   git clone https://github.com/yourusername/network-simulator-pro.git
-   cd network-simulator-pro
-   ```
-
-3. Build and run the containers:
-
-   ```
-   docker-compose up --build
-   ```
+```bash
+docker-compose up --build
+```
 
 The application should now be accessible at `http://localhost:3000`.
 
