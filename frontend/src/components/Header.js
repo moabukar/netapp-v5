@@ -17,7 +17,7 @@ function Header({ handleMenuClick }) {
                     <MenuIcon />
                 </IconButton>
                 <img
-                    src="../../public/images/CoderCo.jpg"
+                    src="/images/coderco-logo.png"
                     alt="CoderCo Logo"
                     style={{ height: 40, marginRight: 16 }}
                 />

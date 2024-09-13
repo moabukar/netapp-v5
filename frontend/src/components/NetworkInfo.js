@@ -6,7 +6,11 @@ function NetworkInfo({ networkInfo }) {
         <Grid container spacing={3}>
             {networkInfo.map((topic, index) => (
                 <Grid item xs={12} md={6} key={index}>
-                    <Card sx={{ height: '100%' }}>
+                    <Card sx={{
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        color: 'text.primary'
+                    }}>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>{topic.title}</Typography>
                             <Typography variant="body2">{topic.description}</Typography>

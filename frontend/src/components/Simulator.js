@@ -11,13 +11,13 @@ function Simulator({ command, setCommand, handleSubmit, output }) {
                     label="Enter command"
                     value={command}
                     onChange={(e) => setCommand(e.target.value)}
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2, input: { color: 'text.primary' } }}
                 />
                 <Button type="submit" variant="contained" color="secondary" size="large">
                     Execute
                 </Button>
             </form>
-            <Paper sx={{ p: 3, mt: 3, bgcolor: 'background.paper' }}>
+            <Paper sx={{ p: 3, mt: 3, bgcolor: 'background.paper', color: 'text.primary' }}>
                 <Typography variant="h6" gutterBottom>
                     Output:
                 </Typography>

@@ -25,8 +25,12 @@ const darkBlueTheme = createTheme({
       main: '#0d47a1',
     },
     background: {
-      default: '#1e2a3a',
+      default: '#0a1929',
       paper: '#102a43',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#b0bec5',
     },
   },
   components: {
@@ -41,6 +45,16 @@ const darkBlueTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
+        },
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1e2a3a',
+          borderRadius: 16,
+          padding: '24px',
+          marginTop: '24px',
         },
       },
     },
