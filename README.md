@@ -2,6 +2,11 @@
 
 Network Simulator Pro is an interactive web application designed to help users learn about networking concepts, practice network commands, and test their knowledge through quizzes.
 
+## Notes
+
+- Backend is hosted on Heroku
+- Frontend is hosted on Vercel
+
 ## Features
 
 - Network command simulator
