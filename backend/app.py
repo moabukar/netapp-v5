@@ -36,7 +36,6 @@ def get_quiz_question():
 def get_network_info():
     info = load_network_info()
     if info is None:
-        logger.error("Failed to load network info")
         return jsonify({"error": "Failed to load network info"}), 500
     return jsonify(info)
 

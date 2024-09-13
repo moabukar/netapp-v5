@@ -31,4 +31,10 @@ def load_quiz_questions():
         return None
 
 def load_network_info():
-    return load_json_file('network_info.json')
+    try:
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'network_info.json')
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except Exception as e:
+        print(f"Error loading network info: {e}")
+        return None

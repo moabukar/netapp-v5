@@ -1,21 +1,32 @@
 import React from 'react';
-import { Grid, Card, CardContent, Typography } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function NetworkInfo({ networkInfo }) {
+    // Check if networkInfo and networkInfo.topics exist and are an array
+    if (!networkInfo || !networkInfo.topics || !Array.isArray(networkInfo.topics) || networkInfo.topics.length === 0) {
+        return <Typography>No network information available.</Typography>;
+    }
+
     return (
         <Grid container spacing={3}>
-            {networkInfo.map((topic, index) => (
-                <Grid item xs={12} md={6} key={index}>
-                    <Card sx={{
-                        height: '100%',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        color: 'text.primary'
+            {networkInfo.topics.map((topic, index) => (
+                <Grid item xs={12} key={index}>
+                    <Accordion sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#ffffff',
                     }}>
-                        <CardContent>
-                            <Typography variant="h6" gutterBottom>{topic.title}</Typography>
-                            <Typography variant="body2">{topic.description}</Typography>
-                        </CardContent>
-                    </Card>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon sx={{ color: '#ffffff' }} />}
+                            aria-controls={`panel${index}-content`}
+                            id={`panel${index}-header`}
+                        >
+                            <Typography variant="h6">{topic.title}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography variant="body2">{topic.description || "No description available."}</Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 </Grid>
             ))}
         </Grid>

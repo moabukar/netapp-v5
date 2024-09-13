@@ -101,9 +101,10 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/api/network_info`);
       const data = await response.json();
-      setNetworkInfo(data.topics);
+      setNetworkInfo(data);  // This now includes the 'topics' key
     } catch (error) {
       console.error('Error fetching network info:', error);
+      setNetworkInfo({ topics: [] });
     }
   };
 
@@ -132,7 +133,6 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setOutput('Executing command...');
     try {
       const response = await fetch(`${API_URL}/api/execute`, {
         method: 'POST',
@@ -144,7 +144,7 @@ function App() {
       const data = await response.json();
       setOutput(data.output);
     } catch (error) {
-      setOutput(`Error: Unable to execute command. Details: ${error.message}`);
+      setOutput('Error: Failed to execute command');
     }
   };
 
