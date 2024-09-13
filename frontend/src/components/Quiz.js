@@ -1,68 +1,90 @@
-import React from 'react';
-import { Card, CardContent, Typography, Grid, Button, CircularProgress, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, Button, TextField, Box } from '@mui/material';
 
-function Quiz({ quizQuestion, showSnackbar, handleQuizAnswer, score, questionCount }) {
-    if (!quizQuestion) {
-        console.log("No quiz question available, showing loading state");
+function Quiz({ quizQuestion, showSnackbar, handleQuizAnswer, score, questionCount, onQuizComplete }) {
+    const [username, setUsername] = useState('');
+    const [quizCompleted, setQuizCompleted] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => {
+        if (questionCount >= 10) {
+            setQuizCompleted(true);
+        }
+    }, [questionCount]);
+
+    const handleSubmitScore = () => {
+        if (!username.trim()) {
+            showSnackbar('Please enter a username');
+            return;
+        }
+        if (submitted) {
+            showSnackbar('Score already submitted');
+            return;
+        }
+        onQuizComplete(score, username);
+        setSubmitted(true);
+        showSnackbar('Score submitted successfully!');
+    };
+
+    const handleStartNewQuiz = () => {
+        setQuizCompleted(false);
+        setSubmitted(false);
+        setUsername('');
+        onQuizComplete(0, ''); // Reset the quiz in the parent component
+    };
+
+    if (!quizQuestion && !quizCompleted) {
+        return <Typography>Loading question...</Typography>;
+    }
+
+    if (quizCompleted) {
         return (
-            <Card sx={{
-                p: 4,
-                mt: 3,
-                backgroundColor: '#1a2035',
-                color: '#ffffff',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '200px'
-            }}>
-                <CircularProgress color="secondary" />
+            <Card>
+                <CardContent>
+                    <Typography variant="h5" gutterBottom>Quiz Completed!</Typography>
+                    <Typography variant="h6" gutterBottom>Your score: {score} out of 10</Typography>
+                    {!submitted ? (
+                        <>
+                            <TextField
+                                label="Enter your username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <Button onClick={handleSubmitScore} variant="contained" color="primary">
+                                Submit Score
+                            </Button>
+                        </>
+                    ) : (
+                        <Button onClick={handleStartNewQuiz} variant="contained" color="primary">
+                            Start New Quiz
+                        </Button>
+                    )}
+                </CardContent>
             </Card>
         );
     }
 
     return (
-        <Card sx={{
-            p: 4,
-            mt: 3,
-            backgroundColor: '#1a2035',
-            color: '#ffffff',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
-        }}>
+        <Card>
             <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                    <Typography variant="h5" sx={{ color: '#4fc3f7', fontWeight: 'bold' }}>
-                        {quizQuestion.question}
-                    </Typography>
-                    <Typography variant="h6" sx={{ color: '#4fc3f7' }}>
-                        Score: {score}/{questionCount}
-                    </Typography>
-                </Box>
-                <Grid container spacing={3}>
-                    {quizQuestion.options && quizQuestion.options.map((option, index) => (
-                        <Grid item xs={12} sm={6} key={index}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                onClick={() => handleQuizAnswer(option === quizQuestion.correct_answer)}
-                                sx={{
-                                    backgroundColor: '#2196f3',
-                                    color: '#ffffff',
-                                    '&:hover': {
-                                        backgroundColor: '#1976d2',
-                                    },
-                                    fontWeight: 'bold',
-                                    fontSize: '1rem',
-                                    padding: '12px',
-                                    textTransform: 'none'
-                                }}
-                            >
-                                {option}
-                            </Button>
-                        </Grid>
+                <Typography variant="h5" gutterBottom>{quizQuestion.question}</Typography>
+                <Box>
+                    {quizQuestion.options.map((option, index) => (
+                        <Button
+                            key={index}
+                            onClick={() => handleQuizAnswer(option === quizQuestion.correct_answer)}
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            style={{ marginTop: '10px' }}
+                        >
+                            {option}
+                        </Button>
                     ))}
-                </Grid>
-                <Typography variant="body2" sx={{ mt: 2, color: '#bdbdbd' }}>
+                </Box>
+                <Typography variant="body2" style={{ marginTop: '20px' }}>
                     Question {questionCount + 1} of 10
                 </Typography>
             </CardContent>

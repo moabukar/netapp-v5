@@ -85,14 +85,22 @@ leaderboard = []
 def submit_score():
     data = request.json
     score = data.get('score')
-    # You might want to add a user identifier here in a real app
-    redis.zadd('leaderboard', {f"Anonymous_{redis.incr('user_counter')}": score})
-    return jsonify({"message": "Score submitted successfully"}), 200
+    username = data.get('username', 'Anonymous')
+    
+    # Ensure username is unique by appending a number if it already exists
+    original_username = username
+    counter = 1
+    while redis.zscore('leaderboard', username):
+        username = f"{original_username}_{counter}"
+        counter += 1
+    
+    redis.zadd('leaderboard', {username: score})
+    return jsonify({"message": "Score submitted successfully", "username": username}), 200
 
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     leaderboard = redis.zrevrange('leaderboard', 0, 9, withscores=True)
-    return jsonify([{"name": name.decode(), "score": score} for name, score in leaderboard])
+    return jsonify([{"username": name.decode(), "score": score} for name, score in leaderboard])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

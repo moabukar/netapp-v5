@@ -78,14 +78,16 @@ function App() {
   const [output, setOutput] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [tabValue, setTabValue] = useState(0);
-  const [quizQuestion, setQuizQuestion] = useState(null);
   const [networkInfo, setNetworkInfo] = useState([]);
   const [commandReference, setCommandReference] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [quizScore, setQuizScore] = useState(0);
-  const [quizQuestionCount, setQuizQuestionCount] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [quizState, setQuizState] = useState({
+    quizQuestion: null,
+    score: 0,
+    questionCount: 0,
+  });
 
   useEffect(() => {
     fetchQuizQuestion();
@@ -98,13 +100,13 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/api/quiz`);
       const data = await response.json();
-      console.log("Fetched quiz question:", data);
-      setQuizQuestion(data);
+      setQuizState(prevState => ({ ...prevState, quizQuestion: data }));
     } catch (error) {
       console.error('Error fetching quiz question:', error);
-      setQuizQuestion(null);
+      setQuizState(prevState => ({ ...prevState, quizQuestion: null }));
     }
   };
+
   const fetchLeaderboard = async () => {
     try {
       const response = await fetch(`${API_URL}/api/leaderboard`);
@@ -115,40 +117,60 @@ function App() {
     }
   };
 
-  const handleQuizAnswer = async (isCorrect) => {
-    if (isCorrect) {
-      setQuizScore(prevScore => prevScore + 1);
-      showSnackbar('Correct! Well done!');
-    } else {
-      showSnackbar('Incorrect. Try again!');
-    }
-    setQuizQuestionCount(prevCount => prevCount + 1);
+  const handleQuizAnswer = (isCorrect) => {
+    setQuizState(prevState => {
+      const newScore = isCorrect ? prevState.score + 1 : prevState.score;
+      const newQuestionCount = prevState.questionCount + 1;
 
-    if (quizQuestionCount + 1 >= 10) {
-      // Quiz completed
-      const finalScore = quizScore + (isCorrect ? 1 : 0);
-      await submitScore(finalScore);
-      showSnackbar(`Quiz completed! Your score: ${finalScore} out of 10`);
-      setQuizScore(0);
-      setQuizQuestionCount(0);
-      fetchLeaderboard();  // Fetch updated leaderboard
-    } else {
-      fetchQuizQuestion();
-    }
+      if (newQuestionCount >= 10) {
+        // Quiz completed
+        showSnackbar(`Quiz completed! Your score: ${newScore} out of 10`);
+      } else {
+        fetchQuizQuestion();
+      }
+
+      return {
+        ...prevState,
+        score: newScore,
+        questionCount: newQuestionCount,
+      };
+    });
+
+    showSnackbar(isCorrect ? 'Correct! Well done!' : 'Incorrect. Try again!');
   };
 
-  const submitScore = async (finalScore) => {
+  const submitScore = async (finalScore, username) => {
     try {
-      await fetch(`${API_URL}/api/submit_score`, {
+      const response = await fetch(`${API_URL}/api/submit_score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ score: finalScore }),
+        body: JSON.stringify({ score: finalScore, username: username }),
       });
-      fetchLeaderboard();  // Fetch updated leaderboard after submitting score
+      if (!response.ok) {
+        throw new Error('Failed to submit score');
+      }
     } catch (error) {
       console.error('Error submitting score:', error);
+      throw error;
+    }
+  };
+
+  const handleQuizComplete = async (finalScore, username) => {
+    try {
+      await submitScore(finalScore, username);
+      showSnackbar('Score submitted successfully!');
+      fetchLeaderboard();
+      // Reset quiz state
+      setQuizState({
+        quizQuestion: null,
+        score: 0,
+        questionCount: 0,
+      });
+      fetchQuizQuestion();
+    } catch (error) {
+      showSnackbar('Failed to submit score. Please try again.');
     }
   };
 
@@ -156,7 +178,7 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/api/network_info`);
       const data = await response.json();
-      setNetworkInfo(data);  // This now includes the 'topics' key
+      setNetworkInfo(data);
     } catch (error) {
       console.error('Error fetching network info:', error);
       setNetworkInfo({ topics: [] });
@@ -255,11 +277,12 @@ function App() {
             <Fade in={tabValue === 1}>
               <div hidden={tabValue !== 1}>
                 <Quiz
-                  quizQuestion={quizQuestion}
+                  quizQuestion={quizState.quizQuestion}
                   showSnackbar={showSnackbar}
                   handleQuizAnswer={handleQuizAnswer}
-                  score={quizScore}
-                  questionCount={quizQuestionCount}
+                  score={quizState.score}
+                  questionCount={quizState.questionCount}
+                  onQuizComplete={handleQuizComplete}
                 />
               </div>
             </Fade>

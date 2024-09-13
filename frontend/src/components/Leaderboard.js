@@ -18,8 +18,10 @@ function Leaderboard({ leaderboard }) {
                     {leaderboard.map((entry, index) => (
                         <ListItem key={index}>
                             <ListItemText
-                                primary={`#${index + 1} - Score: ${entry.score}`}
+                                primary={`#${index + 1} - ${entry.username || 'Anonymous'}`}
+                                secondary={`Score: ${entry.score}`}
                                 primaryTypographyProps={{ style: { color: '#ffffff' } }}
+                                secondaryTypographyProps={{ style: { color: '#b0bec5' } }}
                             />
                         </ListItem>
                     ))}
