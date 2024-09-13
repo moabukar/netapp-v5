@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Typography, Grid, Button, CircularProgress } from '@mui/material';
+import { Card, CardContent, Typography, Grid, Button, CircularProgress, Box } from '@mui/material';
 
-function Quiz({ quizQuestion, showSnackbar, fetchQuizQuestion }) {
+function Quiz({ quizQuestion, showSnackbar, handleQuizAnswer, score, questionCount }) {
     if (!quizQuestion) {
         console.log("No quiz question available, showing loading state");
         return (
@@ -30,23 +30,21 @@ function Quiz({ quizQuestion, showSnackbar, fetchQuizQuestion }) {
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
         }}>
             <CardContent>
-                <Typography variant="h5" gutterBottom sx={{ color: '#4fc3f7', fontWeight: 'bold', marginBottom: 3 }}>
-                    {quizQuestion.question}
-                </Typography>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                    <Typography variant="h5" sx={{ color: '#4fc3f7', fontWeight: 'bold' }}>
+                        {quizQuestion.question}
+                    </Typography>
+                    <Typography variant="h6" sx={{ color: '#4fc3f7' }}>
+                        Score: {score}/{questionCount}
+                    </Typography>
+                </Box>
                 <Grid container spacing={3}>
                     {quizQuestion.options && quizQuestion.options.map((option, index) => (
                         <Grid item xs={12} sm={6} key={index}>
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={() => {
-                                    if (option === quizQuestion.correct_answer) {
-                                        showSnackbar('Correct! Well done!');
-                                    } else {
-                                        showSnackbar('Incorrect. Try again!');
-                                    }
-                                    fetchQuizQuestion();
-                                }}
+                                onClick={() => handleQuizAnswer(option === quizQuestion.correct_answer)}
                                 sx={{
                                     backgroundColor: '#2196f3',
                                     color: '#ffffff',
@@ -64,6 +62,9 @@ function Quiz({ quizQuestion, showSnackbar, fetchQuizQuestion }) {
                         </Grid>
                     ))}
                 </Grid>
+                <Typography variant="body2" sx={{ mt: 2, color: '#bdbdbd' }}>
+                    Question {questionCount + 1} of 10
+                </Typography>
             </CardContent>
         </Card>
     );

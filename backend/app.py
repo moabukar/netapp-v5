@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from redis import Redis
+import os
 import logging
 import random
 from utils.command_executor import execute_command
@@ -8,6 +10,9 @@ from utils.data_loader import load_quiz_questions, load_network_info
 
 app = Flask(__name__)
 CORS(app)
+
+redis = Redis.from_url(os.environ.get("REDIS_URL", "redis://localhost:6379"))
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -72,6 +77,22 @@ def get_command_reference():
         "arp": "Manipulates or displays the kernel's IPv4 network neighbour cache. It can add entries to the table, delete entries, or display current entries."
     }
     return jsonify(reference)
+
+
+leaderboard = []
+
+@app.route('/api/submit_score', methods=['POST'])
+def submit_score():
+    data = request.json
+    score = data.get('score')
+    # You might want to add a user identifier here in a real app
+    redis.zadd('leaderboard', {f"Anonymous_{redis.incr('user_counter')}": score})
+    return jsonify({"message": "Score submitted successfully"}), 200
+
+@app.route('/api/leaderboard', methods=['GET'])
+def get_leaderboard():
+    leaderboard = redis.zrevrange('leaderboard', 0, 9, withscores=True)
+    return jsonify([{"name": name.decode(), "score": score} for name, score in leaderboard])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -53,3 +53,9 @@ The application should now be accessible at `http://localhost:3000`.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Heroko stuff
+
+```bash
+git subtree push --prefix backend heroku main
+```

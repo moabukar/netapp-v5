@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Menu, MenuItem, Tabs, Tab, Fade, Snackbar } from '@mui/material';
+import { Container, Box, Menu, MenuItem, Tabs, Tab, Fade, Snackbar, Button } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import CodeIcon from '@mui/icons-material/Code';
@@ -12,6 +12,9 @@ import Simulator from './components/Simulator';
 import Quiz from './components/Quiz';
 import NetworkInfo from './components/NetworkInfo';
 import CommandReference from './components/CommandReference';
+import Leaderboard from './components/Leaderboard';
+
+
 
 // const API_URL = 'http://localhost:5000';
 // const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -80,11 +83,15 @@ function App() {
   const [commandReference, setCommandReference] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizQuestionCount, setQuizQuestionCount] = useState(0);
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     fetchQuizQuestion();
     fetchNetworkInfo();
     fetchCommandReference();
+    fetchLeaderboard();
   }, []);
 
   const fetchQuizQuestion = async () => {
@@ -96,6 +103,52 @@ function App() {
     } catch (error) {
       console.error('Error fetching quiz question:', error);
       setQuizQuestion(null);
+    }
+  };
+  const fetchLeaderboard = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/leaderboard`);
+      const data = await response.json();
+      setLeaderboard(data);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+    }
+  };
+
+  const handleQuizAnswer = async (isCorrect) => {
+    if (isCorrect) {
+      setQuizScore(prevScore => prevScore + 1);
+      showSnackbar('Correct! Well done!');
+    } else {
+      showSnackbar('Incorrect. Try again!');
+    }
+    setQuizQuestionCount(prevCount => prevCount + 1);
+
+    if (quizQuestionCount + 1 >= 10) {
+      // Quiz completed
+      const finalScore = quizScore + (isCorrect ? 1 : 0);
+      await submitScore(finalScore);
+      showSnackbar(`Quiz completed! Your score: ${finalScore} out of 10`);
+      setQuizScore(0);
+      setQuizQuestionCount(0);
+      fetchLeaderboard();  // Fetch updated leaderboard
+    } else {
+      fetchQuizQuestion();
+    }
+  };
+
+  const submitScore = async (finalScore) => {
+    try {
+      await fetch(`${API_URL}/api/submit_score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ score: finalScore }),
+      });
+      fetchLeaderboard();  // Fetch updated leaderboard after submitting score
+    } catch (error) {
+      console.error('Error submitting score:', error);
     }
   };
 
@@ -186,6 +239,7 @@ function App() {
             <Tab icon={<QuizIcon />} label="Quiz" />
             <Tab icon={<InfoIcon />} label="Network Info" />
             <Tab icon={<MenuBookIcon />} label="Command Reference" />
+            <Tab icon={<span role="img" aria-label="trophy">🏆</span>} label="Leaderboard" />
           </Tabs>
           <Box sx={{ mt: 4 }}>
             <Fade in={tabValue === 0}>
@@ -203,7 +257,9 @@ function App() {
                 <Quiz
                   quizQuestion={quizQuestion}
                   showSnackbar={showSnackbar}
-                  fetchQuizQuestion={fetchQuizQuestion}
+                  handleQuizAnswer={handleQuizAnswer}
+                  score={quizScore}
+                  questionCount={quizQuestionCount}
                 />
               </div>
             </Fade>
@@ -215,6 +271,11 @@ function App() {
             <Fade in={tabValue === 3}>
               <div hidden={tabValue !== 3}>
                 <CommandReference commandReference={commandReference} />
+              </div>
+            </Fade>
+            <Fade in={tabValue === 4}>
+              <div hidden={tabValue !== 4}>
+                <Leaderboard leaderboard={leaderboard} />
               </div>
             </Fade>
           </Box>
