@@ -1,0 +1,20 @@
+{
+    "topics": [
+        {
+            "title": "OSI Model",
+            "description": "The OSI (Open Systems Interconnection) model is a conceptual framework used to describe the functions of a networking system. It consists of seven layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application."
+        },
+        {
+            "title": "IP Addressing",
+            "description": "IP addressing is a fundamental concept in networking that involves assigning unique identifiers to devices on a network. IPv4 uses 32-bit addresses, while IPv6 uses 128-bit addresses to accommodate the growing number of devices on the internet."
+        },
+        {
+            "title": "Subnetting",
+            "description": "Subnetting is the practice of dividing a network into two or more networks. This helps in creating a more efficient and secure network structure by controlling network traffic and optimizing address allocation."
+        },
+        {
+            "title": "DNS (Domain Name System)",
+            "description": "DNS is a hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It translates human-readable domain names to IP addresses."
+        }
+    ]
+}

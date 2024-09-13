@@ -23,3 +23,9 @@ cd frontend
 npm install
 npm start
 ```
+
+## All together
+
+```bash
+docker-compose up --build
+```

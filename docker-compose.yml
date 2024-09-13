@@ -12,7 +12,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3001:3000"  # Map container's 3000 to host's 3001
+      - "3000:3000"  # Map container's 3000 to host's 3001
     volumes:
       - ./frontend:/app
     depends_on:

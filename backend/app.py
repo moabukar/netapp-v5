@@ -1,112 +1,63 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import subprocess
-import shlex
 import logging
-import platform
 import random
+from utils.command_executor import execute_command
+from utils.network_tools import get_ip_info, perform_port_scan, check_website_status
+from utils.data_loader import load_quiz_questions, load_network_info
 
 app = Flask(__name__)
 CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
-
-def run_command(command):
-    try:
-        use_shell = platform.system() == "Windows"
-        
-        if use_shell:
-            output = subprocess.check_output(command, shell=True, universal_newlines=True, stderr=subprocess.STDOUT, timeout=30)
-        else:
-            args = shlex.split(command)
-            output = subprocess.check_output(args, universal_newlines=True, stderr=subprocess.STDOUT, timeout=30)
-        
-        return output.strip()
-    except subprocess.CalledProcessError as e:
-        return f"Error: {e.output.strip()}"
-    except subprocess.TimeoutExpired:
-        return "Error: Command execution timed out"
-    except Exception as e:
-        return f"Error: {str(e)}"
+logger = logging.getLogger(__name__)
 
 @app.route('/api/execute', methods=['POST'])
-def execute_command():
+def api_execute_command():
     data = request.json
     command = data['command']
-    tool = command.split()[0].lower()
-    
-    allowed_tools = ['ping', 'nslookup', 'dig', 'traceroute']
-    
-    if tool not in allowed_tools:
-        return jsonify({'output': f'Error: {tool} is not an allowed command.'})
-    
-    if tool == 'ping':
-        command = f"ping -c 4 {' '.join(command.split()[1:])}"
-    elif tool == 'traceroute':
-        command = f"traceroute -m 15 {' '.join(command.split()[1:])}"
-    
-    app.logger.info(f"Executing command: {command}")
-    output = run_command(command)
-    app.logger.info(f"Command execution result: {output[:100]}...")
-    
+    logger.info(f"Received command: {command}")
+    output = execute_command(command)
+    logger.info(f"Command output: {output}")
     return jsonify({'output': output})
-
-quiz_questions = [
-    {
-        "question": "What does IP stand for?",
-        "options": ["Internet Protocol", "Internal Process", "Integrated Platform", "Information Provider"],
-        "correct_answer": "Internet Protocol"
-    },
-    {
-        "question": "Which layer of the OSI model does the IP protocol operate on?",
-        "options": ["Physical", "Data Link", "Network", "Transport"],
-        "correct_answer": "Network"
-    },
-    {
-        "question": "What is the purpose of DNS?",
-        "options": ["To assign IP addresses", "To translate domain names to IP addresses", "To encrypt network traffic", "To route network packets"],
-        "correct_answer": "To translate domain names to IP addresses"
-    },
-    {
-        "question": "What is the default port for HTTP?",
-        "options": ["80", "443", "8080", "21"],
-        "correct_answer": "80"
-    },
-    {
-        "question": "Which protocol is used for secure web browsing?",
-        "options": ["HTTP", "FTP", "HTTPS", "SMTP"],
-        "correct_answer": "HTTPS"
-    }
-]
 
 @app.route('/api/quiz', methods=['GET'])
 def get_quiz_question():
-    question = random.choice(quiz_questions)
-    return jsonify(question)
+    questions = load_quiz_questions()
+    logger.info(f"Loaded questions: {questions}")
+    if questions is None or not questions:
+        logger.error("Failed to load quiz questions or questions are empty")
+        return jsonify({"error": "Failed to load quiz questions"}), 500
+    return jsonify(random.choice(questions))
 
 @app.route('/api/network_info', methods=['GET'])
 def get_network_info():
-    info = {
-        "topics": [
-            {
-                "title": "OSI Model",
-                "description": "The OSI (Open Systems Interconnection) model is a conceptual framework used to describe the functions of a networking system. It consists of seven layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application."
-            },
-            {
-                "title": "IP Addressing",
-                "description": "IP addressing is a fundamental concept in networking that involves assigning unique identifiers to devices on a network. IPv4 uses 32-bit addresses, while IPv6 uses 128-bit addresses to accommodate the growing number of devices on the internet."
-            },
-            {
-                "title": "Subnetting",
-                "description": "Subnetting is the practice of dividing a network into two or more networks. This helps in creating a more efficient and secure network structure by controlling network traffic and optimizing address allocation."
-            },
-            {
-                "title": "DNS (Domain Name System)",
-                "description": "DNS is a hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It translates human-readable domain names to IP addresses."
-            }
-        ]
-    }
+    info = load_network_info()
+    if info is None:
+        logger.error("Failed to load network info")
+        return jsonify({"error": "Failed to load network info"}), 500
     return jsonify(info)
+
+@app.route('/api/ip_info', methods=['POST'])
+def api_get_ip_info():
+    data = request.json
+    ip_address = data['ip_address']
+    info = get_ip_info(ip_address)
+    return jsonify(info)
+
+@app.route('/api/port_scan', methods=['POST'])
+def api_perform_port_scan():
+    data = request.json
+    target = data['target']
+    result = perform_port_scan(target)
+    return jsonify(result)
+
+@app.route('/api/website_status', methods=['POST'])
+def api_check_website_status():
+    data = request.json
+    url = data['url']
+    status = check_website_status(url)
+    return jsonify(status)
 
 @app.route('/api/command_reference', methods=['GET'])
 def get_command_reference():

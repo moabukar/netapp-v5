@@ -1,0 +1,22 @@
+[
+    {
+        "question": "What does IP stand for?",
+        "options": [
+            "Internet Protocol",
+            "Internal Process",
+            "Integrated Platform",
+            "Information Provider"
+        ],
+        "correct_answer": "Internet Protocol"
+    },
+    {
+        "question": "Which layer of the OSI model does the IP protocol operate on?",
+        "options": [
+            "Physical",
+            "Data Link",
+            "Network",
+            "Transport"
+        ],
+        "correct_answer": "Network"
+    }
+]
