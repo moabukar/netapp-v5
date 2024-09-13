@@ -14,7 +14,9 @@ import NetworkInfo from './components/NetworkInfo';
 import CommandReference from './components/CommandReference';
 
 // const API_URL = 'http://localhost:5000';
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+const API_URL = process.env.REACT_APP_API_URL || 'https://netapp-backend-bee075ee9b00.herokuapp.com';
 
 const darkBlueTheme = createTheme({
   palette: {
